@@ -1,0 +1,384 @@
+<!doctype html>
+<html>
+<head>
+
+	<meta name="name" content="content" charset="UTF-8" lang="sv">
+
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/TweenLite.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/TimelineLite.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/easing/EasePack.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/plugins/CSSPlugin.min.js"></script>
+
+	<script type="text/javascript" src="animation.js"></script>
+	<script type="text/javascript" src="compatibility.js"></script>
+
+	<style type="text/css">
+		body { margin: 0; }
+		#banner{
+    		border: 1px solid #ccc;
+	    	box-sizing: border-box;
+		}
+
+		#gradient
+		{
+			
+			background: rgba(0,0,0,0);
+			background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+			background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(0,0,0,0)), color-stop(100%, rgba(0,0,0,1)));
+			background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+			background: -o-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+			background: -ms-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+			background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#000000', GradientType=0 );
+		}
+		
+	</style>
+
+	<script>
+		var clickTag = 'http://www.johnniewalker.com/'
+	</script>
+
+	<script type="text/javascript">
+
+	var animation = animation || {};
+	animation.main = function() {
+
+		var width = 300;
+		var height = 600;
+
+		var banner = animation.createElement({id:'banner',width: width, height: height, left:0 ,top:0,backgroundColor: "white", overflow: "hidden", cursor: "pointer", parent: document.body});
+		var mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+		
+		//var imageMapStr = 'map_small.jpg';
+		//var imageDisplacementStr = 'background_small.jpg';
+		var images = [
+			"background_light.jpg",
+			"background_nolight.jpg",
+			"man_0.png",
+			"man_1.png",
+			"man_2.png",
+			"man_3.png",
+			"shadows.png",
+			'txt_1_1.png',
+			'txt_1_2.png',
+			'txt_1_3.png',
+			'txt_1_4.png',
+			'logo_txt_white.png',
+			'cta_black.png',
+			'logo_black.png',
+			"bottle.png",
+			"txt_disclaimer.png",
+			//imageMapStr,
+			//imageDisplacementStr,
+
+		];
+
+		animation.preloadImages(images, function() {
+
+			var bgWidth = 455;
+			var scaleP = Math.ceil((300/bgWidth)*102)/100;
+			
+			var bgHolder = animation.createElement({id:'bgHolder', parent: banner,transformOrigin:'50% 50%',left:-78,top:-78,width:455,height:455,scale:scaleP});
+			
+			var bgLight = animation.createElement({backgroundImage: "background_light.jpg",id:'bgLight', parent: bgHolder,alpha:1});
+			var bgNoLight = animation.createElement({backgroundImage: "background_nolight.jpg",id:'bgNoLight', parent: bgHolder,alpha:1,top:0});
+			/*var bgDummy = animation.createElement({backgroundImage: imageDisplacementStr,id:'bgDummy', parent: bgHolder,alpha:1,display:'none'});
+
+			var scaleDisplacement = (bg.get('width')/bgDummy.get('width'));
+			console.log(scaleDisplacement)
+			var displacementHolder = animation.createElement({id:'displacementHolder', parent: bgHolder,alpha:0,scale:scaleDisplacement,transformOrigin:'0% 0%'});
+			*/
+
+			var menHolder = animation.createElement({id:'menHolder', parent: banner,left:-45,top:219,scale:.9,transformOrigin:'50% 50%',width:440,height:365});
+			//var menHolder = animation.createElement({id:'menHolder', parent: banner,left:-48,top:-41,scale:.6,transformOrigin:'50% 50%',width:440,height:365});
+				var man_0 = animation.createElement({backgroundImage: "man_0.png",id:'man_0', parent: menHolder,left:0,top:0,scale:1});
+				var man_2 = animation.createElement({backgroundImage: "man_2.png",id:'man_2', parent: menHolder,left:0,top:0,scale:1});
+				var man_3 = animation.createElement({backgroundImage: "man_3.png",id:'man_3', parent: menHolder,left:0,top:0,scale:1});
+				var man_1 = animation.createElement({backgroundImage: "man_1.png",id:'man_1', parent: menHolder,left:0,top:0,scale:1});
+				var menShadow = animation.createElement({backgroundImage: "shadows.png",id:'menShadow', parent: menHolder,left:-103,top:121,scale:1});
+
+
+			//var blackGradient = animation.createElement({id:'gradient', parent: banner,width:300, bottom:0,	height:70,opacity:.6});
+
+			var txt_1_hol = animation.createElement({width: 170, height: 85, left: 15, top: 30, scale:1, id:"txt_1_yellow_hol", parent: banner,transformOrigin:'0% 0%'});
+				var scale = .60;
+				var ySpace = 32;
+
+					var txt_1_1_hol = animation.createElement({backgroundImage: "txt_1_1.png", scale:scale,left:2,top:0,id:"txt_1_1", parent: txt_1_hol,transformOrigin:'0% 0%',rotationZ:.1});
+					var txt_1_2_hol = animation.createElement({backgroundImage: "txt_1_2.png", scale:scale,left: 3, top: ySpace*1, id:"txt_1_2", parent: txt_1_hol,transformOrigin:'0% 0%',rotationZ:.1});
+					var txt_1_3_hol = animation.createElement({backgroundImage: "txt_1_3.png", scale:scale,left: 2, top: ySpace*2, id:"txt_1_3", parent: txt_1_hol,transformOrigin:'0% 0%',rotationZ:.1});
+					var txt_1_4_hol = animation.createElement({backgroundImage: "txt_1_4.png", scale:scale,left: 0, top: ySpace*3, id:"txt_1_4", parent: txt_1_hol,transformOrigin:'0% 0%',rotationZ:.1});
+					for(var i=1;i<5;i++)
+					{
+						var txt_copy = txt_1_hol.appendChild(document.getElementById('txt_1_'+i).cloneNode(false));
+						txt_copy.id += '_copy';
+						TweenLite.set(txt_copy,{alpha:0})
+						//txt_copy.style.visibility='hidden';
+					}
+
+			var logo_txt_white = animation.createElement({backgroundImage: "logo_txt_white.png", width: 179, height: 18, bottom:16, right: 62, transformOrigin:'0% 0%', id:"logo_txt_white", parent: banner});
+			var txt_disclaimer = animation.createElement({visibility:'hidden',backgroundImage: "txt_disclaimer.png", width: 371/2, height: 16/2, top:7, opacity:.6,transformOrigin:'0% 0%', id:"txt_disclaimer", parent: banner});
+			var bottle = animation.createElement({visibility:'hidden',backgroundImage: "bottle.png", right:10,bottom:0,width: 44, height: 116, id:"bottle", parent: banner});
+			//var bottle = animation.createElement({visibility:'hidden',backgroundImage: "glass.png", right:10,bottom:-8,id:"glass", parent: banner});
+
+			var scale = .60;
+			var scaleLogo = .4;
+			var logo_black = animation.createElement({backgroundImage: "logo_black.png", left: 118,  scale:scaleLogo, id:"logo_black", parent: txt_1_hol,transformOrigin:'0% 0%'});
+			var cta_black = animation.createElement({backgroundImage: "cta_black.png", left: 60,  scale:scale, id:"cta_black", parent: txt_1_hol,transformOrigin:'0% 0%'});
+			
+			txt_disclaimer.centerHorizontal();
+			
+			cta_black.set({top:Math.round(txt_1_4_hol.get('top')+(txt_1_4_hol.get('height')*scale)+4),left:74});
+			logo_black.set({top:Math.round(txt_1_4_hol.get('top')+(txt_1_4_hol.get('height')*scale)-(logo_black.get('height')*scaleLogo))-1,left:Math.round(cta_black.get('left')+(cta_black.get('width')*scale)-(logo_black.get('width')*scaleLogo))-2});
+
+			var coverHolder = animation.createElement({id:'coverHolder', parent: banner,width:width,height:height,backgroundColor:'#000000',visibility:'visible'});
+			var coverHolderBlend = animation.createElement({id:'coverHolderBlend', parent: banner,width:width,height:height,backgroundColor:'#000000',visibility:'hidden',display:'block'});
+			if(!mobile) coverHolderBlend.set({mixBlendMode:'overlay'})
+			
+			//----------------------SETUP TIMELINE--------------------//
+
+			var slowMoX =26;
+			var slowMoY = slowMoX/6;
+			var paralax = [{id:'floor',fric:.5},{id:'sky',fric:.3}]
+
+			var t1 = 3;
+			var t2 = 1.6;
+			var t3 = 7;
+			var t_x = '+='+(width+50).toString();
+			var t_de = 0.1;
+
+			var eas6 = Power3.easeInOut
+
+			var arrayTextClips = [];
+			var i=1
+			var safety = 100;
+			var blurAmount =4;
+
+			while(gT('txt_1_'+i)!=undefined && i<safety)
+			{
+				arrayTextClips.push(gT('txt_1_'+i));
+				i++;
+			}
+			
+			var tl = new TimelineLite({onComplete: function() {
+				//console.log("tl timeline is done!")
+				reset()
+				TweenLite.delayedCall(.1, function() { tl.play(0); });
+			}});	
+			
+			
+			var lightFlickerCount = 100;
+			var counter = lightFlickerCount;
+
+			function setLights()
+			{
+				var spd1 = rr(.6,.8);
+
+				var currentAlpha = bgNoLight.get('opacity');
+				var alpha1 = rr(0,1);
+				var dif = Math.abs(currentAlpha-alpha1);
+				var safety = 0;
+				while(dif<.3)
+				{
+					alpha1 = rr(0,1);
+					dif = Math.abs(currentAlpha-alpha1);
+					if(safety>100) break
+					safety++
+				}
+				var ease = Power1.easeInOut;
+
+				TweenLite.to(bgNoLight,spd1,{alpha:alpha1,ease:ease})
+				var delay = spd1*2;
+
+				TweenLite.delayedCall(delay,setLights)
+			}
+			setLights();
+
+			//console.log('displacement: '+displacement)
+			
+			tl.play();
+			
+			//var bgWidth = bgFloor.get('width');
+			//var bgMovement = -bgWidth/5;
+			
+			tl.add([ 
+
+				TweenLite.to(coverHolder, 1, {alpha:0,autoAlpha:0, ease:Sine.easeOut}),
+				TweenLite.to(coverHolderBlend, 1.5, {alpha:0,autoAlpha:0, ease:Sine.easeIn}),
+				
+			],'+=0');
+
+			function tweenMen()
+			{
+				var spd = 10;
+				var dY = -20;
+				var easing = Linear.easeNone;
+				easing = Quad.easeOut;
+
+				TweenLite.to(man_0, spd, {y:dY*.2, ease: easing});
+				TweenLite.to(man_1, spd, {y:dY*1.2, rotation:2,ease: easing});
+				TweenLite.to(man_2, spd, {y:dY*1.4, rotation:-2, ease: easing});
+				TweenLite.to(man_3, spd, {y:dY*.9, ease: easing});
+				TweenLite.to(menShadow, spd, {alpha:0, ease: easing});
+			}
+
+			//tl.pause();
+
+			var panSpeed = 1;
+			var panX = -25;
+			var ease = Cubic.easeOut
+			tl.add([ 
+
+				TweenLite.from(bgHolder, panSpeed, {scale:1.1,y:100,x:110,ease: ease}),
+				TweenLite.from(menHolder, panSpeed, {alpha:0,scale:1.5,  y:200,x:250, ease: ease}),
+				TweenLite.from(man_0, panSpeed, {x:-50, ease: ease}),
+				TweenLite.from(man_1, panSpeed, {x:-50, ease: ease}),
+				TweenLite.from(man_2, panSpeed, {x:0, ease: ease}),
+				TweenLite.from(man_3, panSpeed, {x:50, ease: ease}),
+
+				TweenLite.delayedCall(panSpeed*.8,tweenMen)
+				
+				//TweenLite.to(bgSkyHolder,panSpeed, {x:bgMovement*getFric('sky'), y:0,  ease: ease}),
+				//TweenLite.to(bgFloorHolder, panSpeed, {x:bgMovement*getFric('floor'), y:0,  ease: ease}),
+				
+				
+			],'-=1.2');
+
+			//left:-18,top:-11,scale:.44
+			var panSpeed = 5;
+			var easing = Cubic.easeInOut;
+
+			tl.add([ 
+
+				//TweenLite.to(bgHolder, panSpeed, {scale:1,y:0,x:0,ease: easing}),
+				//TweenLite.to(menHolder, panSpeed, {scale:.44,  y:20,x:20, ease: easing}),
+				//TweenLite.to(bgSky, t3, {x:-slowMoX*getFric('sky'), y:-slowMoY,  ease: Linear.easeNone}),
+				//TweenLite.to(bgFloor, t3, {x:-slowMoX*getFric('floor'), y:-slowMoY,  ease: Linear.easeNone}),
+				//TweenLite.to(subHolder, t3, {x:0, y:0,  ease: Linear.easeNone}),
+				
+			],'+=0');
+
+			var tweenArray =[];
+			var delay = 0;
+			var spdText = .9
+			var easeText = Cubic.easeInOut
+			var delayText = .3
+			
+			for(var i=0;i<arrayTextClips.length;i++)
+			{
+				delay +=delayText;
+				var clip = arrayTextClips[i]
+				var clipCopy = document.getElementById(clip.id+"_copy");
+				var speedDelayBlur = .05;
+				tweenArray.push(TweenLite.from(clip, spdText, {delay:delay, x:t_x,  alpha:0.5,  ease: easeText}));
+				tweenArray.push(TweenLite.from(clipCopy, spdText-speedDelayBlur, {delay:delay+speedDelayBlur, x:t_x,    ease: Sine.easeInOut,onStart:motionBlur,onStartParams:[clipCopy,spdText,easeText,blurAmount,blurAmount]}));
+				tweenArray.push(TweenLite.from(clipCopy, spdText, {delay:delay, alpha:.5, scaleX:1.4, ease: Cubic.easeInOut,transformOrigin:'0% 0%'}));
+				//if(i==2) delay+=delayText*1;
+			}
+			delay+=spdText*1.1;
+			tweenArray.push(TweenLite.from(logo_black, t2, {delay:delay, x:"+=80",  alpha:0, ease: Expo.easeOut}));
+			tweenArray.push(TweenLite.from(cta_black, t2, {delay:delay, x:"-=80",  alpha:00, ease: Expo.easeOut}));
+
+			tl.add(tweenArray,"-=.4");
+
+			tl.add([ 
+				//TweenLite.from(blackGradient, .8, {autoAlpha:0,delay:0, alpha:0.0,  ease: eas6}),
+				TweenLite.from(bottle, .8, {autoAlpha:0,delay:0, y:"+=40",  alpha:0.0,  ease: eas6}),
+				TweenLite.from(logo_txt_white, 0.8, {delay:0,   alpha:0, ease: eas6,delay:0}),
+				TweenLite.from(txt_disclaimer, 0.8, {autoAlpha:0,delay:0,   alpha:0, ease: eas6,delay:0})
+				
+			],'-=1');
+			
+
+			tl.add([ 
+				TweenLite.to(coverHolder, 1, {alpha:1,autoAlpha:1, ease:Sine.easeOut}),
+				TweenLite.to(coverHolderBlend, .5, {alpha:1,autoAlpha:1, ease:Sine.easeOut}),
+			],'+=3.5');
+			
+			//--------------------------------------------------//
+
+			
+			//----------------------EXECUTE--------------------//
+			reset();
+			TweenLite.ticker.fps(60)
+			
+			banner.addEventListener("click", function () 
+			{
+				window.open(clickTag, "_blank")
+			});
+			//--------------------------------------------------//
+
+
+			//----------------------FUNCTIONS--------------------//
+
+			function reset()
+			{
+				TweenLite.set(man_0,{x:0,y:0})
+				TweenLite.set(man_1,{x:0,y:0})
+				TweenLite.set(man_2,{x:0,y:0})
+				TweenLite.set(man_3,{x:0,y:0})
+				TweenLite.set(menShadow,{alpha:1})
+
+				/*TweenLite.set(mainHolder,{x:0,y:0})
+				TweenLite.set(subHolder,{x:-slowMoX,y:-slowMoY});
+
+				TweenLite.set(bgSkyHolder,{x:0,y:bgSkyHolder.getOriginal('top')});
+				TweenLite.set(bgFloorHolder,{x:0,y:bgFloorHolder.getOriginal('top')});
+
+				TweenLite.set(bgFloor,{x:0,y:0});
+				TweenLite.set(bgSky,{x:0,y:0});
+				*/
+			}
+
+			function gT(id) 
+			{
+				return document.getElementById(id)
+			}
+
+			function motionBlur(clip,time,ease,blurFrom,blurTo)
+			{
+				if(mobile) return;
+				var clipObj = {clip:clip,blurX:blurFrom};
+				TweenLite.to(clipObj, time*.95, {blurX:blurTo, onUpdate:setBlur,onUpdateParams:[clipObj], ease: ease});
+			}
+
+			function setBlur(clipObj)
+			{
+				var proporties = ['-webkit-filter','-moz-filter','-ms-filter' ,'-o-filter','filter'];
+				var blurXRound = Math.round(clipObj.blurX)
+				for (var i = 0; i<proporties.length; i++) 
+				{
+					if(blurXRound!=0) clipObj.clip.style[proporties[i]] = 'blur('+clipObj.blurX+'px)';
+					else clipObj.clip.style[proporties[i]] = '';
+				}
+			}
+
+			function getFric(id)
+			{
+				for(var i=0;i<paralax.length;i++)
+				{
+					if(paralax[i].id == id) return paralax[i].fric;
+				}
+			}
+
+			function updateDisplacement() 
+			{
+				//console.log('updateDisplacement')
+				displacement.update();
+				// meter.tick()
+			}
+
+			function rr(min, max,round)
+			{
+				var r = (Math.random() * (max - min)) + min;
+			    if(!round) return r;
+			    else return Math.floor(r); 
+			}
+
+			//--------------------------------------------------//
+		});
+	}
+	</script>
+</head>
+<body onload="animation.main();"></body>
+</html>

@@ -1,0 +1,66 @@
+html,
+body,
+div,
+img,
+a {
+    margin: 0;
+    padding: 0;
+}
+
+.container,
+.border,
+.bg-exit {
+    width: 300px;
+    height: 600px;
+    box-sizing: border-box;
+}
+
+.container {
+    position: relative;
+    background-color: #fff;
+    overflow: hidden;
+    display: none;
+}
+
+.container div,
+.container img,
+.container a {
+    position: absolute;
+}
+
+.border {
+    border: 1px solid #ddd;
+}
+
+.bg-exit {
+    background-color: #fff;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.whiteBottom {
+    bottom: 0;
+    width: 300px;
+    height: 110px;
+    background-color: #fff;
+}
+
+.cta {
+    top: 525px;
+    left: 75px;
+}
+.black_bg{
+    width: 300px;
+    height: 600px;
+    background-color: #030204;
+}
+.white_bg {
+    width: 300px;
+    height: 600px;
+    background-color: #e41d25;   
+}
+.replay {
+    left: 5px;
+    top: 5px;
+    cursor: pointer;
+}

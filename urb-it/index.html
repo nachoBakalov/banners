@@ -1,0 +1,578 @@
+<!doctype html>
+<html>
+<head>
+	
+	<meta name="name" content="content" charset="UTF-8" lang="sv">
+
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/TweenLite.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/TimelineLite.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/easing/EasePack.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/plugins/CSSPlugin.min.js"></script>
+	<script type="text/javascript" src="animation.js"></script>
+	<script type="text/javascript" src="animation_utils.js"></script>
+	<script type="text/javascript" src="PerspectiveTransform.min.js"></script>
+	<script type="text/javascript" src="dat.gui.min.js"></script>
+	
+	<style type="text/css">
+		body { margin: 0; }
+	</style>
+
+	<script type="text/javascript">
+
+	var animation = animation || {};
+	animation.main = function() {
+
+		var width = 980;
+		var height = 500;
+
+		var banner = animation.createDiv({
+			width: width,
+			height: height,
+			backgroundColor: "#e8d7cd",
+			overflow: "hidden",
+			parent: document.body
+		});
+
+		var hover_active = false;
+		var expanded = false;
+		var x_factor = 0; // hover
+		var y_factor = 1; // hover
+		var hotspotsEnabled = false;
+		
+		// camera
+		var camera;
+		var rot_p = {x: 0, y: 0, z: 0};
+		var view_distance = 10000;
+		var fl = width * 3;
+		var camera_pos_1 = {x: 313, y: 499, z: 4986, x_rot: 0.00, y_rot: 0, z_rot: 0}
+		var camera_pos_2 = {x: -196.528, y: 499, z: 4986, x_rot: 0.025, y_rot: -0.044, z_rot: 0}
+		var camera_pos_3 = {x: 0, y: 292.633, z: 3035, x_rot: 0.051, y_rot: 0, z_rot: 0} // see all
+
+		var hotspots;
+
+		setupCamera();
+		//setupGUI();
+		
+		// 3d world geometry
+		var faces = [
+			{ // backdrop
+				points: [{x: -14.9, y: -34.448, z: 168.26}, {x: -14.9, y: 1.162, z: 168.26}, {x: 5.69999, y: 1.162, z: 168.26}, {x: 5.69999, y: -34.448, z: 168.26}],
+				texture: "backdrop.png"
+			}, 
+			{	// mark 1
+				points: [{x: -3.82108, y: 1.172, z: 14.7702}, {x: -3.82108, y: 1.172, z: 6.35707}, {x: 3.12107, y: 1.172, z: 6.35707}, {x: 3.12107, y: 1.172, z: 14.7702}],
+				texture: "mark_1.png"
+			}, 
+			{	// mark 2
+				points: [{x: 3.12107, y: 1.172, z: 23.1833}, {x: -3.82108, y: 1.172, z: 23.1833}, {x: -3.82108, y: 1.172, z: 14.7702}, {x: 3.12107, y: 1.172, z: 14.7702}],
+				texture: "mark_2.png"
+			}, 
+			{	// mark 3
+				points: [{x: -3.82108, y: 1.172, z: 73.6621}, {x: -3.82108, y: 1.172, z: 23.1833}, {x: 3.12107, y: 1.172, z: 23.1833}, {x: 3.12107, y: 1.172, z: 73.6621}],
+				texture: "mark_3.png"
+			}, 
+			{	// gula huset
+				points: [{x: -0.0200028, y: -4.848, z: 32.3596}, {x: -0.0200028, y: 1.162, z: 32.3596}, {x: 3.95, y: 1.162, z: 32.3596}, {x: 3.95, y: -4.848, z: 32.3596}],
+				texture: "gulahuset.png"
+			},
+			{	// buss 2
+				points:  [{x: -0.818346, y: -0.440955, z: 47.8}, {x: -4.51165, y: -0.440955, z: 47.8}, {x: -4.51165, y: 1.17095, z: 47.8}, {x: -0.818346, y: 1.17095, z: 47.8}],
+				texture: "buss_2.png"
+			},
+			{	// svarta huset
+				points: [{x: -4.89, y: -6.668, z: 39.7896}, {x: -4.89, y: 1.162, z: 39.7896}, {x: -1.88, y: 1.162, z: 39.7896}, {x: -1.88, y: -6.668, z: 39.7896}],
+				texture: "svartahuset.png"
+			}, 
+			{	// klädaffären
+				points: [{x: 0.684999, y: -2.54118, z: 16.5396}, {x: 0.684999, y: 1.158, z: 16.5396}, {x: 2.795, y: 1.158, z: 16.5396}, {x: 2.795, y: -2.54118, z: 16.5396}],
+				texture: "kladaffaren.png"
+			},
+			
+			{	// pop 3 
+				points:   [{x: 0.160408, y: 1.17998, z: 26.866}, {x: 0.160408, y: 0.0340227, z: 26.866}, {x: -1.41241, y: 0.0340227, z: 26.866}, {x: -1.41241, y: 1.17998, z: 26.866}],
+				texture: "pop_3.png"
+			},
+			{	// buss, cykel
+				points: [{x: -0.295496, y: 0.535538, z: 17.6171}, {x: -1.86443, y: 0.53555, z: 17.6164}, {x: -1.86444, y: 1.17256, z: 17.6171}, {x: -0.295506, y: 1.17255, z: 17.6177}],
+				texture: "bussCykel.png"
+			},
+			{	// svampen fot
+				points: [{x: 0.592829, y: 0.592468, z: 13.485}, {x: 0.417171, y: 0.592468, z: 13.485}, {x: 0.417171, y: 1.17753, z: 13.485}, {x: 0.592829, y: 1.17753, z: 13.485}],
+				texture: "svampenFot.png"
+			},
+			{	// svampen topp
+				points: [{x: 1.15166, y: 0.695273, z: 12.7818}, {x: 1.15166, y: 0.490727, z: 14.0042}, {x: -0.0876554, y: 0.490727, z: 14.0042}, {x: -0.0876554, y: 0.695273, z: 12.7818}],
+				texture: "SvampenTop.png"
+			},
+			{	// cykelhuset
+				points: [{x: -1.26232, y: 1.162, z: 14.8886}, {x: -1.26232, y: -2.268, z: 14.8886}, {x: -1.58019, y: -2.268, z: 9.38738}, {x: -1.58019, y: 1.162, z: 9.38738}],
+				texture: "cykelhuset.png"
+			},
+			// {	// svampen
+			// 	points: [{x: 1.17208, y: 1.18142, z: 13.39}, {x: 1.17208, y: 0.48258, z: 13.39}, {x: -0.112081, y: 0.48258, z: 13.39}, {x: -0.112081, y: 1.18142, z: 13.39}],
+			// 	texture: "svampen.png"
+			// },
+			{	// pop 5
+				points: [{x: -1.3178, y: 0.70617, z: 13.6225}, {x: -1.3178, y: 1.20383, z: 13.6225}, {x: 1.5578, y: 1.20383, z: 11.6975}, {x: 1.5578, y: 0.70617, z: 11.6975}],
+				texture: "pop_5.png"
+			},
+			{	// pop 4
+				points:  [{x: 1.99269, y: 0.425156, z: 11.8247}, {x: -1.53885, y: 0.425156, z: 9.7445}, {x: -1.53885, y: 1.17484, z: 9.7445}, {x: 1.99269, y: 1.17484, z: 11.8247}],
+				texture: "pop_4.png"
+			},
+			{	// buss 1
+				points:  [{x: 0.687576, y: 0.882271, z: 7.93776}, {x: 0.687576, y: 1.15723, z: 7.93776}, {x: 0.731326, y: 1.15723, z: 8.1942}, {x: 0.731326, y: 0.882271, z: 8.1942}],
+				texture: "buss_front.png"
+			}, 
+			{	// buss 2
+				points: [{x: -0.261326, y: 1.15723, z: 8.06605}, {x: 0.687576, y: 1.15723, z: 7.93776}, {x: 0.687576, y: 0.882271, z: 7.93776}, {x: -0.261326, y: 0.882271, z: 8.06605}],
+				texture: "buss_side.png"
+			}, 
+			{	// buss 4
+				points: [{x: -0.261326, y: 0.882271, z: 8.06605}, {x: 0.687576, y: 0.882271, z: 7.93776}, {x: 0.731326, y: 0.882271, z: 8.1942}, {x: -0.215958, y: 0.882271, z: 8.33225}],
+				texture: "buss_tak.png"
+			},			
+			{	// pop 2
+				points:  [{x: 1.27643, y: 1.17619, z: 7.543}, {x: 1.27643, y: 0.323463, z: 7.543}, {x: -1.01781, y: 0.323463, z: 7.543}, {x: -1.01781, y: 1.17619, z: 7.543}],
+				texture: "pop_2.png"
+			},
+			{	// pop 1
+				points: [{x: -1.12301, y: 0.863597, z: 7.25274}, {x: -1.12301, y: 1.1864, z: 7.25274}, {x: 0.833007, y: 1.1864, z: 7.35526}, {x: 0.833007, y: 0.863597, z: 7.35526}],
+				texture: "pop_1.png"
+			}
+		];
+
+		hotspots = [
+			{point: {x: -0.377263, y: 0.918004, z: 7.28818}, lookAt: {x: -109.822, y: 500, z: 4335.309, x_rot: 0.116, y_rot: -0.031, z_rot: 0.004}, flip: 1, scenario_id: 4},
+			{point: {x: 1.272, y: 0.842004, z: 12.74}, lookAt: {x: 345.385, y: 346.825, z: 5310.754, x_rot: 0.129, y_rot: 0, z_rot: 0}, flip: 1, scenario_id: 1},
+			{point: {x: -1.268, y: -0.257996, z: 14.27}, lookAt: {x: -250.72, y: 0, z: 5527.519, x_rot: -0.061, y_rot: -0.100, z_rot: 0}, flip: 1, scenario_id: 3},
+			{point: {x: 0.95, y: -2.323, z: 32.344}, lookAt: {x: -207.367, y: -500, z: 6519.729, x_rot: -0.053, y_rot: 0.03, z_rot: 0}, flip: 1, scenario_id: 2}
+		];
+
+		var images = [
+			"hotspot_logo.png",
+			"hotspot_shape.png",
+			"hotspot_shape_hover.png",
+			"scenario_1.png",
+			"scenario_2.png",
+			"scenario_3.png",
+			"scenario_4.png",
+			"close_btn.png",
+			"close_hover_btn.png",
+			"cta.png",
+			"cta_hover.png"
+		];
+
+		for(var f in faces) {
+			images.push(faces[f].texture);
+		}
+
+		var scene = animation.createDiv({parent: banner, width: width, height: height});
+		fade_in = animation.createDiv({width: width, height: height, backgroundColor: "white", parent: banner});
+		fade_in.tw = TweenLite.to(fade_in, 0.5, {autoAlpha: 0, delay: 1, ease: Quad.easeInOut, paused: true, onReverseComplete: function() {
+			parent.postMessage("collapse", "*");
+		}});
+
+		
+
+		animation.preloadImages(images, function() {
+			
+			parent.postMessage("load_complete", "*");
+
+			setTimeout(function() {
+
+				// create 3d world
+				for(var i = 0; i < faces.length; ++i) {
+					var points = faces[i].points;
+
+					for(var j = 0; j < points.length; j++) {
+						var point = points[j];
+						point.x *= 500;
+						point.y *= 500;
+						point.z *= 500;
+					}
+
+					var face_div = animation.createDiv({backgroundImage: faces[i].texture, parent: scene});
+					var transform = new PerspectiveTransform(face_div, face_div.get("width"), face_div.get("height"), false);
+
+					faces[i].transform = transform;
+					faces[i].div = face_div;
+
+					var c1 = faces[i].points[1];
+					var c2 = faces[i].points[2];
+					var c3 = faces[i].points[3];
+					var c4 = faces[i].points[4];
+					
+					banner.addEventListener("mousemove", function(e) {
+						//if(!hover_active) return;
+						x_factor = animation.utils.norm(e.clientX, 0, width);
+						y_factor = animation.utils.norm(e.clientY, 0, height);				
+					});
+
+					transform.update();
+				}
+
+				for(var i = 0; i < faces[2].points.length; ++i) {
+					faces[2].points[i].y += 2;
+				}
+				for(var i = 0; i < faces[3].points.length; ++i) {
+					faces[3].points[i].y += 5;
+				}
+
+				// create hotspots
+				for(var i = 0; i < hotspots.length; ++i) {
+
+					var hotspot = createHotspot();
+					hotspot.set({cursor: "pointer"});
+					scene.appendChild(hotspot);
+					hotspot.point = hotspots[i].point;
+					hotspot.lookAt = hotspots[i].lookAt;
+					hotspot.flip = hotspots[i].flip;
+					hotspot.scenario_id = hotspots[i].scenario_id;
+					hotspot.i = i;
+					hotspot._scale = 0;
+					hotspots[i] = hotspot;
+				
+					hotspot.point.x *= 500;
+					hotspot.point.y *= 500;
+					hotspot.point.z *= 500;
+				}
+
+				function createHotspot() {
+					var hotspot = animation.createDiv();
+					hotspot.shape = animation.createDiv({backgroundImage: ["hotspot_shape.png", "hotspot_shape_hover.png"], retina: true, parent: hotspot});
+					hotspot.shape.set({
+						left: -hotspot.shape.get("width") / 2,
+						top: -hotspot.shape.get("height") + 10
+					});
+					hotspot.logo = animation.createDiv({backgroundImage: "hotspot_logo.png", parent: hotspot, top: -99, left: -23, retina: true})
+					
+					hotspot.addEventListener("mouseenter", function(e) {
+						if(!hotspotsEnabled) return;
+						hotspot.shape.gotoAndStop(2);
+					});
+
+					hotspot.addEventListener("mouseleave", function(e) {
+						if(!hotspotsEnabled) return;
+						hotspot.shape.gotoAndStop(1);
+					});
+
+					hotspot.addEventListener("click", function(e) {
+						if(hotspotsEnabled) {
+							expandScenario.call(this);
+							hotspotsEnabled = false;	
+						}
+						
+					});
+
+					return hotspot;
+				}
+
+
+				var darken = animation.createDiv({width: width, height: height, backgroundColor: "black", autoAlpha: 0, parent: scene});
+				var scenario = animation.createDiv({backgroundImage: ["scenario_1.png", "scenario_2.png", "scenario_3.png", "scenario_4.png"], y: -height, retina: true, parent: scene});
+				scenario.centerHorizontal();
+				scenario.set({top: height / 2 - scenario.get("height") / 2 - 20});
+				var close_btn = animation.createDiv({backgroundImage: ["close_btn.png", "close_hover_btn.png"], cursor: "pointer", retina: true, parent: scenario});
+				close_btn.set({right: close_btn.get("width") * -0.5, top: close_btn.get("height") * -0.5});
+				close_btn.addEventListener("click", collapseScenario);
+				close_btn.onmouseenter = function() {
+					close_btn.gotoAndStop(2);
+				}
+				close_btn.onmouseleave = function() {
+					close_btn.gotoAndStop(1);
+				}
+
+				// cta
+				var cta = animation.createDiv({backgroundImage: ["cta.png", "cta_hover.png"], retina: true, cursor: "pointer", right: 20, bottom: 20, parent: scene});
+				cta.onmouseenter = function(){
+					cta.gotoAndStop(2);
+				}
+				cta.onmouseleave = function() {
+					cta.gotoAndStop(1);
+				}
+
+				function expandScenario() {
+					hover_active = false;
+					var scenario_id = this.scenario_id;
+					console.log(this)
+					TweenLite.to(camera, 1, {x: this.lookAt.x, y: this.lookAt.y, z: this.lookAt.z, x_rot: this.lookAt.x_rot, y_rot: this.lookAt.y_rot, z_rot: this.lookAt.z_rot, ease: Quad.easeInOut, onComplete: function() {
+						
+						// darken
+						darken.to(0.5, {autoAlpha: 0.5, onComplete: function() {
+							scenario.gotoAndStop(scenario_id)
+							TweenLite.to(scenario, 0.5, {y: 0, ease: Quad.easeOut, overwrite: 0, onComplete: function() {
+								expanded = true;
+							}});
+						}});
+					}});
+				}
+
+				function collapseScenario() {
+					if(!expanded) return;
+
+					for(var i = 0; i < hotspots.length; ++i) {
+						hotspots[i].shape.gotoAndStop(1);
+					}
+
+					TweenLite.to(scenario, 0.5, {y: -560, ease: Quad.easeIn, overwrite: 1});
+					darken.to(0.5, {autoAlpha: 0, delay: 0.5})
+
+					TweenLite.to(camera, 1, {
+						x: 0,
+						y: animation.utils.lerp(y_factor, camera_pos_3.y - 400, camera_pos_3.y),
+						z: animation.utils.lerp(y_factor, camera_pos_3.z + 2200, camera_pos_3.z),
+						x_rot: animation.utils.lerp(y_factor, camera_pos_3.x_rot - 0.1, camera_pos_3.x_rot),
+						y_rot: animation.utils.lerp(x_factor, camera_pos_3.y_rot, camera_pos_3.y_rot + 0.02),
+						z_rot: 0,
+						
+						
+						onComplete: function() {
+							expanded = false;
+							hover_active = true;
+							hotspotsEnabled = true;
+						}
+					});
+
+					
+					/*TweenLite.to(camera, 1, {x: camera_pos_3.x, y: camera_pos_3.y, z: camera_pos_3.z, x_rot: camera_pos_3.x_rot, y_rot: camera_pos_3.y_rot, z_rot: camera_pos_3.z_rot, delay: 0.5, ease: Quad.easeInOut, onComplete: function() {
+						expanded = false;
+						hover_active = true;
+					}});*/				
+				}
+
+				camera.tl.play();
+				fade_in.tw.play();
+				TweenLite.ticker.addEventListener("tick", update);
+				hotspotsEnabled = true;
+				var a = 0.00;
+				function update() {
+					if(hover_active) {
+						TweenLite.to(camera, 1, {
+							y_rot: animation.utils.lerp(x_factor, camera_pos_3.y_rot, camera_pos_3.y_rot + 0.02),
+							x_rot: animation.utils.lerp(y_factor, camera_pos_3.x_rot - 0.1, camera_pos_3.x_rot),
+							z: animation.utils.lerp(y_factor, camera_pos_3.z + 2200, camera_pos_3.z),
+							y: animation.utils.lerp(y_factor, camera_pos_3.y - 400, camera_pos_3.y)
+						});
+					}
+					
+					
+					for(var i = 0; i < faces.length; ++i) {
+						var face = faces[i];
+						var points = face.points;
+						var transform = face.transform;
+						var div = face.div;
+
+						
+						for(var j = 0; j < points.length; j++) {
+							var point = points[j];		
+							perspective(point);
+						}			
+
+						transform.topLeft.x = points[0]._x;
+						transform.topLeft.y = points[0]._y;
+
+						transform.bottomLeft.x = points[1]._x;
+						transform.bottomLeft.y = points[1]._y;
+
+						transform.bottomRight.x = points[2]._x;
+						transform.bottomRight.y = points[2]._y;
+
+						transform.topRight.x = points[3]._x;
+						transform.topRight.y =  points[3]._y;
+
+
+						if(transform.checkError() == 0) {
+							transform.update(); // update the perspective transform
+				        	div.style.display = "block"; // show the element
+				        	//div.style.webkitTransform += " scale(1.02, 1.02)";
+						} else {
+							div.style.display = "none"; // hide the element
+						}					
+					}
+					for(var i = 0; i < hotspots.length; ++i) {
+						var hotspot = hotspots[i];
+						perspective(hotspot.point);
+
+						var y = hotspot.point._y;
+						var rotation = 45  * hotspot.flip + (1 - y / height) * 90 * hotspot.flip;
+						var scale = Math.pow(Math.sin((y / height) * Math.PI), 0.4) * hotspot._scale;
+						
+						if(y < height && y > 0) {
+
+							hotspot.set({x: hotspot.point._x, y: hotspot.point._y, scale: scale});
+							hotspot.to(0.5, {rotation: rotation})
+							hotspot.logo.to(0.5, {rotation: -rotation})
+						} else {
+							hotspot.set({x: 0, y: 0, scale: 0});
+						}					
+					}				
+				} // end update
+			});	// end preload images
+		}, 500);
+		
+		//////
+		// 3 D
+
+		function setupCamera() {
+			camera = {x: 0, y: 0, z: 0, x_rot: 0, y_rot: 0, z_rot: 0, tween: 0};
+			
+
+			var control_point = calculateControlPoint(camera_pos_1, camera_pos_2, camera_pos_3);
+			camera.tl = TweenLite.to(camera, 5, {tween: 1, ease: Quad.easeInOut, paused: true, delay: 1, onComplete: function() {
+				hover_active = true;
+				console.log(hotspots)
+				for(var i in hotspots) {
+					TweenLite.to(hotspots[i], 0.5, {_scale: 1, ease: Back.easeOut, delay: i * 0.2});
+				}
+			}, onUpdate: function() {
+				updateCamera(quadraticBezier(camera_pos_1, control_point, camera_pos_3, camera.tween));
+			}});
+		}
+
+		function updateCamera(ctrl) {
+			if(ctrl.x) camera.x = ctrl.x;
+			if(ctrl.y) camera.y = ctrl.y;
+			if(ctrl.z) camera.z = ctrl.z;
+			if(ctrl.x_rot) camera.x_rot = ctrl.x_rot;
+			if(ctrl.y_rot) camera.y_rot = ctrl.y_rot;
+			if(ctrl.z_rot) camera.z_rot = ctrl.z_rot;
+		}
+
+		function perspective(point) {
+
+			coordRotation(camera, point, camera.x_rot, camera.y_rot, camera.z_rot, rot_p);
+
+			var z_dist = rot_p.z - camera.z;
+				if(z_dist < -fl || z_dist > view_distance) {
+				//return;
+			}
+			
+			var scale = fl / (fl + z_dist);
+			
+			point._x = width * 0.5 + (rot_p.x - camera.x) * scale;
+			point._y = height * 0.5 + (rot_p.y - camera.y) * scale;
+			
+		}
+
+		function coordRotation(center, point, x_rot, y_rot, z_rot, dst) {
+
+			var cos_x = (x_rot == 0 ? 1 : Math.cos(x_rot));
+			var sin_x = (x_rot == 0 ? 0 : Math.sin(x_rot));
+
+			var cos_y = (y_rot == 0 ? 1 : Math.cos(y_rot));
+			var sin_y = (y_rot == 0 ? 0 : Math.sin(y_rot));
+
+			var cos_z = (z_rot == 0 ? 1 : Math.cos(z_rot));
+			var sin_z = (z_rot == 0 ? 0 : Math.sin(z_rot));
+
+			var x = point.x - center.x;
+			var y = point.y - center.y;
+			var z = point.z - center.z;
+
+			var x1, y1, z1, x2
+
+			// rotate on x axis
+			y1 = cos_x * y - sin_x * z;
+			z1 = cos_x * z + sin_x * y;
+
+			// rotate on y axis
+			x1 = cos_y * x - sin_y * z1;
+			z1 = cos_y * z1 + sin_y * x;
+
+			// rotate on z axis
+			x2 = cos_z * x1 - sin_z * y1;
+			y1 = cos_z * y1 + sin_z * x1;
+
+			dst.x = x2 + center.x;
+			dst.y = y1 + center.y;
+			dst.z = z1 + center.z;
+		}
+
+		///////////////
+		// D A T  G U I
+
+		function setupGUI() {
+
+			camera.log = function() {
+				console.log(
+					"{x: " + animation.utils.roundToPlaces(camera.x, 3) +
+					", y: " + animation.utils.roundToPlaces(camera.y, 3) +
+					", z: " + animation.utils.roundToPlaces(camera.z, 3) +
+					", x_rot: " + animation.utils.roundToPlaces(camera.x_rot, 3) +
+					", y_rot: " + animation.utils.roundToPlaces(camera.y_rot, 3) +
+					", z_rot: " + animation.utils.roundToPlaces(camera.z_rot, 3) +
+					"}"
+				);
+			}
+
+			var gui = new dat.GUI();
+			gui.add(camera, "x", -500, 500);
+			gui.add(camera, "y", 0, 500);
+			gui.add(camera, "z", 0, 10000);
+			gui.add(camera, "x_rot", -0.2, 0.2);
+			gui.add(camera, "y_rot", -0.2, 0.2);
+			gui.add(camera, "z_rot", -0.2, 0.2);
+			gui.add(camera, "log");	
+		}
+
+		//////////////
+		// B E Z I E R
+
+		// six dimensional quadratic bezier to use for camera animation
+		function quadraticBezier(p0, p1, p2, t, pFinal) {
+			pFinal = pFinal || {};
+			var tt = t * t;
+			pFinal.x = Math.pow(1 - t, 2) * p0.x +
+						(1 - t) * 2 * t * p1.x +
+						tt * p2.x;
+			pFinal.y = Math.pow(1 - t, 2) * p0.y +
+						(1 - t) * 2 * t * p1.y +
+						tt * p2.y;
+			pFinal.z = Math.pow(1 - t, 2) * p0.z +
+						(1 - t) * 2 * t * p1.z +
+						tt * p2.z;
+
+			pFinal.x_rot = Math.pow(1 - t, 2) * p0.x_rot +
+						(1 - t) * 2 * t * p1.x_rot +
+						tt * p2.x_rot;
+			pFinal.y_rot = Math.pow(1 - t, 2) * p0.y_rot +
+						(1 - t) * 2 * t * p1.y_rot +
+						tt * p2.y_rot;
+			pFinal.z_rot = Math.pow(1 - t, 2) * p0.z_rot +
+						(1 - t) * 2 * t * p1.z_rot +
+						tt * p2.z_rot;
+
+			return pFinal;
+		}
+
+		// given points for a quadratic bezier curve,
+		// this function calculates a new control point
+		// that makes the curve go THROUGH the original control point
+		function calculateControlPoint(p0, p1, p2) {
+			var p = {};
+			p.x = p1.x * 2 - (p0.x + p2.x) / 2;
+			p.y = p1.y * 2 - (p0.y + p2.y) / 2;
+			p.z = p1.z * 2 - (p0.z + p2.z) / 2;
+
+			p.x_rot = p1.x_rot * 2 - (p0.x_rot + p2.x_rot) / 2;
+			p.y_rot = p1.y_rot * 2 - (p0.y_rot + p2.y_rot) / 2;
+			p.z_rot = p1.z_rot * 2 - (p0.z_rot + p2.z_rot) / 2;
+
+			return p;		
+		}
+
+		// iframe comm
+		window.onmessage = function(e){
+			if (e.data == 'close') {
+				fade_in.tw.reverse();
+			}
+		}
+
+	} // end namespace
+
+	</script>
+
+</head>
+<body onload="animation.main();"></body>
+</html>

@@ -1,0 +1,281 @@
+<!doctype html>
+<html>
+<head>
+
+	<meta name="name" content="content" charset="UTF-8" lang="sv">
+
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/TweenLite.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/TimelineLite.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/easing/EasePack.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/plugins/CSSPlugin.min.js"></script>
+	<script type="text/javascript" src="animation.js"></script>
+
+
+	<style type="text/css">
+		body { margin: 0;}
+	</style>
+
+	<script type="text/javascript">
+
+	var animation = animation || {};
+	animation.main = function() {
+
+		var width = 300;
+		var height = 250;
+
+		var banner = animation.createElement({width: width, height: height, backgroundColor: "#358287", overflow:  "hidden", cursor: "pointer", parent: document.body});
+
+		var images = [
+			"cta_gradient.png", 
+			"cta_bg_stroke.png", 
+			"cta_explorenow_white.png", 
+			"cta_bg_fill.png", 
+			"cta_explorenow_black.png", 
+			"extension.png", 
+			"joggin.png", 
+			"the.png", 
+			"runner_2.png", 
+			"bugaboo_2.png", 
+			"Introducing_2.png", 
+			"txt_free.png", 
+			"txt_run.png", 
+			"runner.png", 
+			"bugaboo.png", 
+			"Introducing.png", 
+			"logo.png", 
+			//"guide_final_screen.jpg",
+			"woman_big.png",
+			"bg_free.png",
+			"bg_run.png",
+			"txt_Free.png",
+			"txt_Run.png",
+			"txt_rUn.png",
+			"txt_ruN.png",
+			"txt_fRee.png",
+			"txt_frEe.png",
+			"txt_freE.png",
+			"bg_second_plane.jpg",
+			"bg_first_plane.png",
+			"woman_big.png",
+			"bugaboo_trolley.png",
+
+
+
+
+		];
+
+		animation.preloadImages(images, function() {
+
+			///////////////////////
+			// C R E A T E  D I V S
+
+			
+			var bg = animation.createElement({left: 0, top: 0, parent: banner});
+
+				var bg_second_plane_container = animation.createElement({parent: bg, rotationX:0.1,scale:.6,width:660,height:460,transformOrigin:"50% 50%",left: -188, top: -127});
+				var bg_second_plane = animation.createElement({backgroundImage: "bg_second_plane.jpg",opacity:"1",   parent: bg_second_plane_container});
+				var bg_first_plane_woman = animation.createElement({left: 0, top: 0, transformOrigin:"50% 50%",  parent: bg});	
+					var bg_first_plane = animation.createElement({backgroundImage: "bg_first_plane.png", rotationY:0.02,  left: -19, top: 129, opacity:"1", transformOrigin:"50% 50%", parent: bg_first_plane_woman});
+					var woman = animation.createElement({backgroundImage: "woman_big.png", scale:"0.5", rotationY:0.01, transformOrigin:"50% 100%", x: 112, y: -121, parent: bg_first_plane_woman});
+			var cta_gradient = animation.createElement({backgroundImage: "cta_gradient.png", scaleX:1.5, left:120, opacity:"1", top: 204, parent: banner});
+			
+			var bg_cover = animation.createElement({backgroundColor:"#2c8187", opacity:"0", left: 0, top: 0, width:300, height:250, parent: banner});
+			var bugaboo_trolley = animation.createElement({backgroundImage: "bugaboo_trolley.png", rotationY:0.01, transformOrigin:"50% 50%", x: 66, y: 74, parent: banner});
+
+			var txt_2 = animation.createElement({left: 12, top: 191, parent: banner});
+				var extension = animation.createElement({backgroundImage: "extension.png", top: 31, parent: txt_2});
+				var joggin = animation.createElement({backgroundImage: "joggin.png", top: 18, parent: txt_2});
+				var the = animation.createElement({backgroundImage: "the.png", parent: txt_2});
+
+			
+			var txt_3 = animation.createElement({left: 19, top: 42, parent: banner});
+				var runner_2 = animation.createElement({backgroundImage: "runner_2.png", left: 133, top: 56, parent: txt_3});
+				var bugaboo_2 = animation.createElement({backgroundImage: "bugaboo_2.png", left: 78, top: 56, parent: txt_3});
+				var Introducing_2 = animation.createElement({backgroundImage: "Introducing_2.png", top: 56, parent: txt_3});
+				var txt_free = animation.createElement({ top: 30, parent: txt_3});
+					var bg_free = animation.createElement({backgroundImage: "bg_free.png", transformOrigin:"0% 0%", parent: txt_free});
+					var txt_Free = animation.createElement({backgroundImage: "txt_Free.png", parent: txt_free});
+					var txt_fRee = animation.createElement({backgroundImage: "txt_fRee.png", left: 50, parent: txt_free});
+					var txt_frEe = animation.createElement({backgroundImage: "txt_frEe.png", left: 105, parent: txt_free});
+					var txt_freE = animation.createElement({backgroundImage: "txt_freE.png", left: 159, parent: txt_free});
+				var txt_run = animation.createElement({ parent: txt_3});
+					var bg_run = animation.createElement({backgroundImage: "bg_run.png", transformOrigin:"0% 0%", parent: txt_run});
+					var txt_Run = animation.createElement({backgroundImage: "txt_Run.png", parent: txt_run});
+					var txt_rUn = animation.createElement({backgroundImage: "txt_rUn.png", left: 51, parent: txt_run});
+					var txt_ruN = animation.createElement({backgroundImage: "txt_ruN.png", left: 104, parent: txt_run});
+			
+			var txt_1 = animation.createElement({left: 19, top: 44, parent: banner});
+				var runner = animation.createElement({backgroundImage: "runner.png", left: 100, top: 18, parent: txt_1});
+				var bugaboo = animation.createElement({backgroundImage: "bugaboo.png", top: 18, parent: txt_1});
+				var Introducing = animation.createElement({backgroundImage: "Introducing.png", parent: txt_1});
+
+			var logo = animation.createElement({backgroundImage: "logo.png", left: 4, top: 4, parent: banner});
+			//var guide = animation.createElement({backgroundImage: "guide_final_screen.jpg", opacity:"0.0",left: 0, top: 0, parent: banner});
+			
+
+			var cta = animation.createElement({left: 179, top: 203, parent: banner});
+				var cta_bg_stroke = animation.createElement({backgroundImage: "cta_bg_stroke.png", parent: cta});
+				var cta_explorenow_white = animation.createElement({backgroundImage: "cta_explorenow_white.png", left: 22, top: 13, parent: cta});
+				var cta_bg_fill = animation.createElement({backgroundImage: "cta_bg_fill.png", left: 2, top: 2, transformOrigin:"0% 0%", scaleX:0, parent: cta});
+				var cta_explorenow_black = animation.createElement({backgroundImage: "cta_explorenow_black.png", left: 22, top: 13, opacity:0, parent: cta});
+
+			var cover = animation.createElement({backgroundColor:"#358287", left: 0, top: 0, width:300, height:250, parent: banner});
+
+			var buttonArea = animation.createElement({backgroundImage: "cta_bg_stroke.png", opacity:"0", left: 179, top: 203, parent: banner});
+			
+
+			////////////////////
+			// A N I M A T I O N
+
+			var firstPlay = false;
+
+			function resetPositions() {
+			
+					woman.set({x: woman.getOriginal('x')});
+					bg_second_plane_container.set({x: 0.3});
+
+					TweenLite.to(bg_second_plane_container, 8, { delay:2, x:"+=20", ease: Linear.easeNone})
+					TweenLite.to(woman, 8, { delay:2, x:"-=15", ease: Linear.easeNone})	
+					tl.play(0);
+
+			}
+
+			var timesPlayed=1;
+
+			function loopPlay() {
+				timesPlayed+=1;
+				console.log(timesPlayed)
+				if (timesPlayed<=3) {
+					TweenLite.to(cover, 0.4, {opacity:1, ease: Linear.easeNone, onComplete:resetPositions});
+
+
+				} 
+			}
+
+			
+
+
+			// main timeline							
+			var tl = new TimelineLite({onComplete:tlComplete});
+
+			function tlComplete(){
+				TweenLite.delayedCall(2, function() { loopPlay(); }); // REPLAY MAIN TIMELINE		
+			}					
+
+			tl.add([ // ZOOM IN AND TXT 1 APPEARING
+				TweenLite.to(cover, 0.4, {opacity:0, ease: Linear.easeNone}),
+				TweenLite.to(bg_first_plane_woman, 3, {scale:2.1, x:"-=285", y:"-=93", ease: Power4.easeInOut}),
+				TweenLite.to(bg_second_plane, 3, { x:"=95", y:"=55", ease: Power4.easeInOut}),
+				TweenLite.to(bg_second_plane_container, 3, {scale:.9, ease: Power4.easeInOut}),
+				TweenLite.from(cta_gradient, 3, {opacity:0, scale:1, x:"-=100", ease: Power4.easeInOut}),
+				TweenLite.from(cta, 3, {opacity:0,  ease: Power4.easeInOut}),
+				
+				TweenLite.from(Introducing, 3, {opacity:0,  x:"-=125", ease: Power4.easeInOut}),
+				TweenLite.from(bugaboo, 0.3, {delay: 2.5, opacity:0,  ease: Power1.easeOut}),
+				TweenLite.from(runner, 0.9, {delay: 2.8, opacity:0,  x:"-=25", ease: Power3.easeOut}),
+			], "+=0.4");
+
+			tl.add([ //TXT 2 APPEARING
+				TweenLite.from(the, 0.5, {delay: 0,opacity:0,  x:"-=25", ease: Power3.easeOut}),
+				TweenLite.from(joggin, 0.3, {delay: 0.4, opacity:0,  ease: Power1.easeOut}),
+				TweenLite.from(extension, 0.9, {delay: 0.7, opacity:0,  x:"-=25", ease: Power3.easeOut}),
+			], "-=0.3");
+
+			tl.add([ //TXT 1 DIS-APPEAREING
+				TweenLite.to(Introducing, 0.4, {delay: 0, opacity:0, ease: Power1.easeIn}),
+				TweenLite.to(bugaboo, 0.4, {delay: 0, opacity:0, ease: Power1.easeIn}),
+				TweenLite.to(runner, 0.4, {delay: 0, opacity:0,  ease: Power1.easeIn}),
+			], "+=1");
+
+			var t1 = 0.6;
+			var x_dif = "-=100"
+
+			tl.add([ //TXT 2 APPEARING
+				TweenLite.from(bg_run, 0.6, {delay: 0,  scaleX:0, ease: Power3.easeOut}),
+				TweenLite.from(txt_Run, t1, {delay: 0.1, opacity:0, x:x_dif, ease: Power4.easeOut}),
+				TweenLite.from(txt_rUn, t1, {delay: 0.2, opacity:0, x:x_dif, ease: Power4.easeOut}),
+				TweenLite.from(txt_ruN, t1, {delay: 0.3, opacity:0, x:x_dif, ease: Power4.easeOut}),				
+
+				TweenLite.from(bg_free, 0.6, {delay: 0.4,  scaleX:0,  ease: Power3.easeOut}),
+				TweenLite.from(txt_Free, t1, {delay: 0.5, opacity:0, x:x_dif, ease: Power4.easeOut}),
+				TweenLite.from(txt_fRee, t1, {delay: 0.6, opacity:0, x:x_dif, ease: Power4.easeOut}),
+				TweenLite.from(txt_frEe, t1, {delay: 0.7, opacity:0, x:x_dif, ease: Power4.easeOut}),
+				TweenLite.from(txt_freE, t1, {delay: 0.8, opacity:0, x:x_dif, ease: Power4.easeOut}),
+
+				TweenLite.from(Introducing_2, 0.5, {delay: 1.2, opacity:0, ease: Power1.easeOut}),
+				TweenLite.from(bugaboo_2, 0.5, {delay: 1.7, opacity:0, ease: Power1.easeOut}),
+				TweenLite.from(runner_2, 0.5, {delay: 2.2, opacity:0,  ease: Power1.easeOut}),
+			], "-=0");
+
+			tl.add([ // ZOOM OUT 
+				TweenLite.to(bg_first_plane_woman, 2, {scale:1.1, x:"+=220", y:"+=62", ease: Power4.easeInOut}),
+				TweenLite.to(bg_second_plane, 2, {scale:0.7, x:"+=15", y:"=55", ease: Power4.easeInOut}),
+				//TweenLite.to(bg_second_plane_container, 2, { x:"-=10", ease: Power4.easeInOut}),
+			], "+=0.5");
+			
+			tl.add([ // TROLLEY AND BLUE BG APPEARING / WOMAN DISAPPEARING 
+				//bg_cover / bugaboo_trolley
+				TweenLite.to(bg_cover, 1, {opacity:0.5,  ease: Power1.easeInOut}),
+				TweenLite.to(woman, 1, {opacity:0,  ease: Power1.easeInOut}),
+				TweenLite.from(bugaboo_trolley, 1, {opacity:0,  ease: Power1.easeInOut}),
+				//txt_free / txt_run / runner_2 / bugaboo_2 / Introducing_2
+				TweenLite.to(txt_free, 1, {opacity:0,  ease: Power1.easeInOut}),
+				TweenLite.to(txt_run, 1, {opacity:0,  ease: Power1.easeInOut}),
+				TweenLite.to(runner_2, 1, {opacity:0,  ease: Power1.easeInOut}),
+				TweenLite.to(bugaboo_2, 1, {opacity:0,  ease: Power1.easeInOut}),
+				TweenLite.to(Introducing_2, 1, {opacity:0,  ease: Power1.easeInOut}),
+				
+				//TweenLite.to(bg_second_plane_container, 2, { x:"-=10", ease: Power4.easeInOut}),
+			], "+=0");
+
+			
+			
+			
+
+
+
+			function lastCoverAnimation() {
+				if (timesPlayed<=2) {
+					TweenLite.to(cover, 1, {opacity:1, ease: Power4.easeInOut})
+				} else {
+					tl.pause();
+				}
+			}
+			
+
+
+
+			
+			resetPositions();
+
+			////////////////////////
+			// I N T E R A C T I O N
+
+
+			cover.addEventListener("click", function(e) {
+				// put click logic here...
+			});
+
+			buttonArea.addEventListener("mouseenter", function(){
+				TweenLite.to(cta_bg_fill, 0.3, {delay: 0, scaleX:1,  ease: Power1.easeInOut});
+				TweenLite.to(cta_explorenow_black, 0.3, {delay: 0, opacity:1,  ease: Power2.easeInOut});
+				TweenLite.to(cta_explorenow_white, 0.3, {delay: 0, opacity:0,  ease: Power2.easeInOut});
+				TweenLite.to(cta_gradient, 0.5, {delay: 0, scaleX:0.8,  ease: Power2.easeInOut});
+				
+			});
+
+			buttonArea.addEventListener("mouseleave", function(){
+				TweenLite.to(cta_bg_fill, 0.3, {delay: 0, scaleX:0,  ease: Power1.easeInOut});
+				TweenLite.to(cta_explorenow_black, 0.3, {delay: 0, opacity:0,  ease: Power2.easeInOut});
+				TweenLite.to(cta_explorenow_white, 0.3, {delay: 0, opacity:1,  ease: Power2.easeInOut});
+				TweenLite.to(cta_gradient, 0.5, {delay: 0, scaleX:1.5,  ease: Power2.easeInOut});			
+			});
+
+
+
+		});
+	}
+	</script>
+</head>
+<body onload="animation.main();"></body>
+</html>
